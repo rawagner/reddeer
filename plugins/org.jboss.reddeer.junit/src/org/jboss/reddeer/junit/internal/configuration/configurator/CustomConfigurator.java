@@ -14,39 +14,40 @@ import java.util.List;
 
 import org.jboss.reddeer.common.logging.Logger;
 import org.jboss.reddeer.junit.configuration.RedDeerConfigurationException;
-import org.jboss.reddeer.junit.internal.configuration.reader.XMLReader;
 import org.jboss.reddeer.junit.requirement.CustomConfiguration;
 import org.jboss.reddeer.junit.requirement.Requirement;
 
 /**
- * Reads custom configuration from XML file and sets the configuration into the requirement. 
+ * Sets one of custom configuration from the given list into the requirement. 
  * 
- * @author Lucia Jelinkova
+ * @author Lucia Jelinkova, Ondrej Dockal
  *
  */
-public class CustomConfigurator implements RequirementConfigurator{
+public class CustomConfigurator implements RequirementConfigurator {
 
 	private static final Logger log = Logger.getLogger(CustomConfigurator.class);
 	
-	private XMLReader reader;
+	private List<Object> configurations;
 	
 	/**
 	 * Instantiates a new custom configurator.
 	 *
-	 * @param reader the reader
+	 * @param configurations list of configurations
 	 */
-	public CustomConfigurator(XMLReader reader) {
-		super();
-		this.reader = reader;
+	public CustomConfigurator(List<Object> configurations) {
+		this.configurations = configurations;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.jboss.reddeer.junit.internal.configuration.configurator.RequirementConfigurator#configure(org.jboss.reddeer.junit.requirement.Requirement)
+	/**
+	* Iterate over all configurations and tries to cast the configuration object to expected configuration class
+	* that must implement {@link CustomConfiguration}.
+	* Class cast exception is caught and iteration continues, if any configuration fits, 
+	* {@link RedDeerConfigurationException} is thrown.
 	 */
 	@Override
 	public void configure(Requirement<?> requirement) {
 		
-		if (!(requirement instanceof CustomConfiguration<?>)){
+		if (!(requirement instanceof CustomConfiguration<?>)) {
 			throw new IllegalArgumentException("The requirement does not implement " + CustomConfiguration.class);
 		}
 		
@@ -57,16 +58,23 @@ public class CustomConfigurator implements RequirementConfigurator{
 		
 		log.debug("Configuration object associated with requirement " + requirement.getClass() + " is " + customConfiguration.getConfigurationClass());
 		
-		List<Object> configs = reader.getConfiguration(customConfiguration.getConfigurationClass());
-		if (configs.isEmpty()){
-			throw new RedDeerConfigurationException("No configuration found in XML configuration file for requirement class " + customConfiguration.getClass());
+		// iterate over all configurations and tries to cast the configuration object to expected configuration class
+		// Class cast exception is caught and iteration continues, if none configuration fits, new 
+		boolean configurationSet = false;
+		for (Object configuration : this.configurations) {
+			try {
+				customConfiguration.setConfiguration(configuration);
+				log.debug("Configuration successfully set");		
+				configurationSet = true;
+				break;
+			} catch (ClassCastException e) {
+				log.error("This configuration (" + configuration + ") cannot be set to " + requirement.toString());
+			}
 		}
-		
-		if (configs.size() > 1){
-			throw new RedDeerConfigurationException("More then one configuration found in XML configuration file for requirement class " + customConfiguration.getClass());
+		if (!configurationSet) {
+			throw new RedDeerConfigurationException("None of the given configurations "
+					+ "could have ben set as configuration of the requirement " + requirement.getClass().getName());
 		}
-		
-		customConfiguration.setConfiguration(configs.get(0));
-		log.debug("Configuration successfully set");
+
 	}
 }

@@ -14,6 +14,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.Random;
 
 import org.jboss.reddeer.common.logging.Logger;
 import org.jboss.reddeer.eclipse.jdt.ui.preferences.JREsPreferencePage;
@@ -85,6 +86,12 @@ public class JRERequirement implements Requirement<JRE>, CustomConfiguration<JRE
 		}
 	}
 
+	@Override
+	public boolean isDeclarationAcceptable() {
+		// TODO Delete random generating
+		return new Random().nextBoolean();
+	}
+	
 	/**
 	 * Adds new JRE using Preferences &gt; Java &gt; Installed JRE's, Add JRE wizard.
 	 */

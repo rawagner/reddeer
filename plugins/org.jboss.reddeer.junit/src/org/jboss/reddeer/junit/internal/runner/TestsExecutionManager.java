@@ -51,6 +51,7 @@ public class TestsExecutionManager {
 	 * 				as test class without a run
 	 */
 	public void addTest(Class<?> testClass) {
+		System.out.println("Adding class without a run: " + testClass.getName());
 		allTestClasses.add(testClass);
 	}
 	
@@ -62,6 +63,7 @@ public class TestsExecutionManager {
 	 * 				as test class with a run
 	 */
 	public void addExecutedTest(Class<?> testClass) {
+		System.out.println("Adding class with a run: " + testClass.getName());
 		addTest(testClass);
 		executedTestClasses.add(testClass);
 	}

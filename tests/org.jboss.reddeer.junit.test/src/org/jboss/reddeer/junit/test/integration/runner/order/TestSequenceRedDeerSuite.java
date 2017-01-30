@@ -27,7 +27,7 @@ import junit.framework.AssertionFailedError;
 
 public abstract class TestSequenceRedDeerSuite extends RedDeerSuite {
 
-	protected static final String LOCATIONS_ROOT_DIR = "resources/org/jboss/reddeer/junit/integration/runner/order";
+	protected static final String LOCATIONS_ROOT_DIR = "resources/org/jboss/reddeer/junit/integration/runner/order/fileC.xml";
 	
 	public TestSequenceRedDeerSuite(Class<?> clazz, RunnerBuilder builder)
 			throws InitializationError {
@@ -53,17 +53,17 @@ public abstract class TestSequenceRedDeerSuite extends RedDeerSuite {
 	private Throwable createException() {
 		Iterator<?> realSequenceIterator = TestSequence.getRealSequence().iterator();
 		Iterator<?> expectedSequenceIterator = getExpectedSequence().iterator();
-
+		
 		int i = 0;
 		while (realSequenceIterator.hasNext() && expectedSequenceIterator.hasNext()){
 			Object real = realSequenceIterator.next();
 			Object expected = expectedSequenceIterator.next();
+			System.out.println(real.toString() + " vs. " + expected.toString());
 			if (!real.equals(expected)){
 				return new AssertionFailedError("Expected and real sequence differ at index " + i + ".  Expected: " + expected + ", real: " + real);
 			}
 			i++;
 		}
-
 		if (realSequenceIterator.hasNext()){
 			return new AssertionFailedError("Real sequence contains more items than the expected one");
 		} else {
