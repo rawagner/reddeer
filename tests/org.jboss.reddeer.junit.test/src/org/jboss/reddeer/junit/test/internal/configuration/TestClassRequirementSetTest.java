@@ -17,7 +17,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.jboss.reddeer.junit.internal.configuration.TestClassRequirementSet;
+import org.jboss.reddeer.junit.internal.configuration.TestClassRequirementMap;
 import org.jboss.reddeer.junit.test.internal.requirement.TestCustomJavaConfiguration;
 import org.jboss.reddeer.junit.test.internal.requirement.TestCustomServerConfiguration;
 import org.junit.Before;
@@ -25,7 +25,7 @@ import org.junit.Test;
 
 public class TestClassRequirementSetTest {
 
-	private TestClassRequirementSet set;
+	private TestClassRequirementMap set;
 	
 	private Set<Class<?>> configs;
 	
@@ -36,24 +36,24 @@ public class TestClassRequirementSetTest {
 	
 	@Test
 	public void getRequirementConfiguration() {
-		set = new TestClassRequirementSet(configs, null);
+		set = new TestClassRequirementMap(configs, null);
 		assertThat(set.getRequirementConfiguration().size(), is(0));
 		
 		configs.add(TestCustomJavaConfiguration.class);
 		configs.add(TestCustomServerConfiguration.class);
 		
-		set = new TestClassRequirementSet(configs, null);
+		set = new TestClassRequirementMap(configs, null);
 		
 		assertThat(set.getRequirementConfiguration().size(), is(2));
 	}
 	
 	@Test
 	public void getClasses() {
-		set = new TestClassRequirementSet(configs, null); 
+		set = new TestClassRequirementMap(configs, null); 
 		
 		assertThat(set.getClasses().size(), is(0));
 		
-		set = new TestClassRequirementSet(configs, TestClass1.class);
+		set = new TestClassRequirementMap(configs, TestClass1.class);
 		set.addClass(TestClass2.class);
 		
 		assertThat(set.getClasses().size(), is(2));
@@ -63,11 +63,11 @@ public class TestClassRequirementSetTest {
 	
 	@Test
 	public void getClassesAsArray() {
-		set = new TestClassRequirementSet(configs, null);
+		set = new TestClassRequirementMap(configs, null);
 		
 		assertThat(set.getClassesAsArray().length, is(0));
 		
-		set = new TestClassRequirementSet(configs, TestClass1.class);
+		set = new TestClassRequirementMap(configs, TestClass1.class);
 		set.addClass(TestClass2.class);
 		
 		assertThat(set.getClassesAsArray().length, is(2));
@@ -78,7 +78,7 @@ public class TestClassRequirementSetTest {
 	
 	@Test
 	public void equalsAnnotationSet() {
-		set = new TestClassRequirementSet(configs, null);
+		set = new TestClassRequirementMap(configs, null);
 		
 		Set<Class<?>> testSet = new HashSet<>();
 		assertTrue(set.equalAnnotationSet(testSet));
@@ -89,7 +89,7 @@ public class TestClassRequirementSetTest {
 		configs.add(TestCustomJavaConfiguration.class);
 		configs.add(TestCustomServerConfiguration.class);		
 		
-		set = new TestClassRequirementSet(configs, null);
+		set = new TestClassRequirementMap(configs, null);
 		
 		testSet.clear();
 		testSet.add(TestCustomServerConfiguration.class);
@@ -107,7 +107,7 @@ public class TestClassRequirementSetTest {
 		configs.add(TestCustomJavaConfiguration.class);
 		configs.add(TestCustomServerConfiguration.class);
 		
-		set = new TestClassRequirementSet(configs, null);
+		set = new TestClassRequirementMap(configs, null);
 		
 		Set<Class<?>> reqSet1 = set.getRequirementConfiguration();
 		Set<Class<?>> reqSet2 = set.getRequirementConfiguration();

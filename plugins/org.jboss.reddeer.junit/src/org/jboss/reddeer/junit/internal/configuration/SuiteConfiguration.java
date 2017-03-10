@@ -41,11 +41,11 @@ public class SuiteConfiguration {
     
     private Class<?> suiteClass;
     
-    private List<TestClassRequirementSet> annotatedTestClasses = new ArrayList<>();
+    private List<TestClassRequirementMap> annotatedTestClasses = new ArrayList<>();
     
     private List<Annotation> annotationRequirements = new ArrayList<>();
     
-    private Map<TestClassRequirementSet, List<TestRunConfiguration>> testRunConfigurations = new HashMap<>();
+    private Map<TestClassRequirementMap, List<TestRunConfiguration>> testRunConfigurations = new HashMap<>();
     
 	// helps to find annotations over class
 	private AnnotationsFinder finder = new AnnotationsFinder(new RequirementAnnotationMatcher());
@@ -75,7 +75,7 @@ public class SuiteConfiguration {
 		if (configurationReader != null) {
 			// we must create suite with its own list of test classes based on used annotations/requirements
 			// take all test classes that are grouped based on configuration requirements used
-			for (TestClassRequirementSet testClasses : getAnnotatedTestClasses()) {
+			for (TestClassRequirementMap testClasses : getAnnotatedTestClasses()) {
 				List<TestRunConfiguration> testRuns = new ArrayList<>();
 				for (List<Object> list : getConfigurationMatrix(testClasses, configurationReader)) {
 					testRuns.add(list.isEmpty() ? new NullTestRunConfiguration() : new TestRunConfigurationImpl(list));
@@ -83,15 +83,15 @@ public class SuiteConfiguration {
 				this.testRunConfigurations.put(testClasses, testRuns);
 			}
 		} else {
-			this.testRunConfigurations.put(new TestClassRequirementSet(new HashSet<>(), this.suiteClass), Arrays.asList(new NullTestRunConfiguration()));
+			this.testRunConfigurations.put(new TestClassRequirementMap(new HashSet<>(), this.suiteClass), Arrays.asList(new NullTestRunConfiguration()));
 		}
 	}
 	
-	public List<TestClassRequirementSet> getAnnotatedTestClasses() {
+	public List<TestClassRequirementMap> getAnnotatedTestClasses() {
 		return this.annotatedTestClasses;
 	}
 
-	public Map<TestClassRequirementSet, List<TestRunConfiguration>> getTestRunConfigurations() {
+	public Map<TestClassRequirementMap, List<TestRunConfiguration>> getTestRunConfigurations() {
 		if (this.testRunConfigurations == null || this.testRunConfigurations.isEmpty()) {
 			createTestRunConfigurations();
 		}
@@ -105,7 +105,7 @@ public class SuiteConfiguration {
 	 * @return list of lists with all combination of read configurations
 	 */
 	@SuppressWarnings("unchecked")
-	private static <T> List<List<T>> getConfigurationMatrix(TestClassRequirementSet testClasses, TestRunConfigurationReader reader) {
+	private static <T> List<List<T>> getConfigurationMatrix(TestClassRequirementMap testClasses, TestRunConfigurationReader reader) {
 		/*
 		 * If set of configuration objects SCO1 = {A, B, C}, SCO2 = {1, 2} and SCO3 = {3, 4}
 		 * we will get list/set of results like this:
@@ -164,27 +164,33 @@ public class SuiteConfiguration {
 		}
 		List<Class<?>> listOfClasses = getTestClasses(this.suiteClass);
 		for (Class<?> clazz : listOfClasses) {
-			Set<Class<?>> requirements = new HashSet<>();
-			for (Annotation annotation : this.finder.find(clazz)) {
-				// check if requirement is implementing configuration
-				Requirement<?> requirement = RequirementConfigurationObject.getRequirement(annotation);
-				if (requirement instanceof CustomConfiguration || requirement instanceof PropertyConfiguration) {
-					this.annotationRequirements.add(annotation);
-					requirements.add(annotation.annotationType());
-				}
-			}
-			if (this.annotatedTestClasses.isEmpty()) {
-				this.annotatedTestClasses.add(new TestClassRequirementSet(requirements, clazz));
+			Set<Class<?>> requirements = getClassRequirements(clazz);
+			TestClassRequirementMap existingReqSet = getExistingRequirementSet(requirements);
+			// if null then add new set of requirements 
+			if (existingReqSet == null) {
+				this.annotatedTestClasses.add(new TestClassRequirementMap(requirements, clazz));
 			} else {
-				TestClassRequirementSet existingReqSet = getExistingRequirementSet(requirements);
-				// if null then add new set of requirements 
-				if (existingReqSet == null) {
-					this.annotatedTestClasses.add(new TestClassRequirementSet(requirements, clazz));
-				} else {
-					existingReqSet.addClass(clazz);
-				}
+				existingReqSet.addClass(clazz);
 			}
 		}
+	}
+	
+	/**
+	 * Gets all requirement annotations from specified class.
+	 * @param clazz
+	 * @return
+	 */
+	private Set<Class<?>> getClassRequirements(Class<?> clazz){
+		Set<Class<?>> requirements = new HashSet<>();
+		for (Annotation annotation : this.finder.find(clazz)) {
+			// check if requirement is implementing configuration
+			Requirement<?> requirement = RequirementConfigurationObject.getRequirement(annotation);
+			if (requirement instanceof CustomConfiguration || requirement instanceof PropertyConfiguration) {
+				this.annotationRequirements.add(annotation);
+				requirements.add(annotation.annotationType());
+			}
+		}
+		return requirements;
 	}
 	
 	/**
@@ -192,10 +198,12 @@ public class SuiteConfiguration {
 	 * @param set set of requirements
 	 * @return test class requirement set if such exists
 	 */
-	private TestClassRequirementSet getExistingRequirementSet(Set<Class<?>> set) {
-		for (TestClassRequirementSet classSet : this.annotatedTestClasses) {
-			if (classSet.equalAnnotationSet(set)) {
-				return classSet;
+	private TestClassRequirementMap getExistingRequirementSet(Set<Class<?>> set) {
+		if(set != null){
+			for (TestClassRequirementMap classSet : this.annotatedTestClasses) {
+				if (classSet.equalAnnotationSet(set)) {
+					return classSet;
+				}
 			}
 		}
 		return null;

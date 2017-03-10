@@ -12,7 +12,7 @@ import java.util.Set;
  * @author odockal
  *
  */
-public class TestClassRequirementSet {
+public class TestClassRequirementMap {
 
 	private Set<Class<?>> requirementsConfiguration = new HashSet<>();
 	
@@ -23,7 +23,7 @@ public class TestClassRequirementSet {
 	 * @param configs set of configuration classes
 	 * @param clazz test classes
 	 */
-	public TestClassRequirementSet(Set<Class<?>> configs, Class<?> clazz) {
+	public TestClassRequirementMap(Set<Class<?>> configs, Class<?> clazz) {
 		this.requirementsConfiguration = configs;
 		addClass(clazz);
 	}

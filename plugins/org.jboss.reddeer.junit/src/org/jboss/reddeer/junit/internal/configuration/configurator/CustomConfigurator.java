@@ -62,14 +62,12 @@ public class CustomConfigurator implements RequirementConfigurator {
 		// Class cast exception is caught and iteration continues, if none configuration fits, new 
 		boolean configurationSet = false;
 		for (Object configuration : this.configurations) {
-			try {
-				customConfiguration.setConfiguration(configuration);
-				log.debug("Configuration successfully set");		
-				configurationSet = true;
-				break;
-			} catch (ClassCastException e) {
-				log.error("This configuration (" + configuration + ") cannot be set to " + requirement.toString());
-			}
+				if(customConfiguration.getConfigurationClass().isAssignableFrom(configuration.getClass())){
+					customConfiguration.setConfiguration(configuration);
+					log.debug("Configuration successfully set");		
+					configurationSet = true;
+					break;
+				}
 		}
 		if (!configurationSet) {
 			throw new RedDeerConfigurationException("None of the given configurations "

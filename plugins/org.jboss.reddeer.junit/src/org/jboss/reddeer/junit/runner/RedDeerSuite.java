@@ -20,7 +20,7 @@ import org.jboss.reddeer.junit.extensionpoint.IAfterTest;
 import org.jboss.reddeer.junit.extensionpoint.IBeforeTest;
 import org.jboss.reddeer.junit.extensionpoint.IIssueTracker;
 import org.jboss.reddeer.junit.internal.configuration.SuiteConfiguration;
-import org.jboss.reddeer.junit.internal.configuration.TestClassRequirementSet;
+import org.jboss.reddeer.junit.internal.configuration.TestClassRequirementMap;
 import org.jboss.reddeer.junit.internal.configuration.TestRunConfiguration;
 import org.jboss.reddeer.junit.internal.extensionpoint.AfterTestInitialization;
 import org.jboss.reddeer.junit.internal.extensionpoint.BeforeTestInitialization;
@@ -110,8 +110,8 @@ public class RedDeerSuite extends Suite {
 		List<Runner> configuredSuites = new ArrayList<Runner>();
 		boolean isSuite = isSuite(clazz);
 		
-		Map<TestClassRequirementSet, List<TestRunConfiguration>> testRunConfigMatrix = config.getTestRunConfigurations();
-		for (TestClassRequirementSet testRunClasses : testRunConfigMatrix.keySet()) {
+		Map<TestClassRequirementMap, List<TestRunConfiguration>> testRunConfigMatrix = config.getTestRunConfigurations();
+		for (TestClassRequirementMap testRunClasses : testRunConfigMatrix.keySet()) {
 			for (TestRunConfiguration testRunConfig : testRunConfigMatrix.get(testRunClasses)) {
 				RequirementsRunnerBuilder reqRunnerBuilder = buildRequirementRunnerBuilder(testsManager, testRunConfig);
 				configuredSuites.add(new NamedSuite(testRunClasses.getClassesAsArray(), reqRunnerBuilder, testRunConfig.getId()));

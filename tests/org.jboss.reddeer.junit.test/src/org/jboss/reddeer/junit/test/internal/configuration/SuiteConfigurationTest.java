@@ -36,7 +36,7 @@ import org.hamcrest.core.IsCollectionContaining;
 import org.jboss.reddeer.common.properties.RedDeerProperties;
 import org.jboss.reddeer.junit.configuration.RedDeerConfigurationException;
 import org.jboss.reddeer.junit.internal.configuration.SuiteConfiguration;
-import org.jboss.reddeer.junit.internal.configuration.TestClassRequirementSet;
+import org.jboss.reddeer.junit.internal.configuration.TestClassRequirementMap;
 import org.jboss.reddeer.junit.internal.configuration.TestRunConfiguration;
 import org.jboss.reddeer.junit.internal.configuration.TestRunConfigurationReader;
 import org.jboss.reddeer.junit.test.internal.requirement.TestCustomJavaConfiguration;
@@ -81,7 +81,7 @@ public class SuiteConfigurationTest {
 	
 	@Test
 	public void getTestRunConfigurations_noConfig() throws InitializationError {
-		Map<TestClassRequirementSet, List<TestRunConfiguration>> testRuns = config.getTestRunConfigurations();
+		Map<TestClassRequirementMap, List<TestRunConfiguration>> testRuns = config.getTestRunConfigurations();
 		
 		assertThat(testRuns.keySet().size(), is(1));
 		assertThat(testRuns.values().size(), is(1));
@@ -91,7 +91,7 @@ public class SuiteConfigurationTest {
 	public void getTestRunConfigurations_withConfig() throws InitializationError {
 		System.setProperty(RedDeerProperties.CONFIG_FILE.getName(), 
 				SuiteConfigurationTest.RD_CONFIG_DIR + "dirWithConfig" + File.separator + "requirements.xml");
-		Map<TestClassRequirementSet, List<TestRunConfiguration>> testRuns = config.getTestRunConfigurations();
+		Map<TestClassRequirementMap, List<TestRunConfiguration>> testRuns = config.getTestRunConfigurations();
 		
 		String javaConfig = TestCustomJavaConfiguration.class.getSimpleName();
 		String serverConfig = TestCustomServerConfiguration.class.getSimpleName();
@@ -176,7 +176,7 @@ public class SuiteConfigurationTest {
 	
 	@Test 
 	public void getAnnotatedTestClasses() {
-		List<TestClassRequirementSet> result = config.getAnnotatedTestClasses();
+		List<TestClassRequirementMap> result = config.getAnnotatedTestClasses();
 		
 		assertThat(result.size(), is(4));
 		assertThat(result.get(0).getClasses().get(0).getSimpleName(), is("TestClass1"));
@@ -203,7 +203,7 @@ public class SuiteConfigurationTest {
 		System.clearProperty(RedDeerProperties.CONFIG_FILE.getName());
 	}
 	
-	class TestClassRequirementSetMatcher extends TypeSafeMatcher<TestClassRequirementSet> {
+	class TestClassRequirementSetMatcher extends TypeSafeMatcher<TestClassRequirementMap> {
 
 		private Set<Class<?>> set;
 		
@@ -216,8 +216,8 @@ public class SuiteConfigurationTest {
 		}
 
 		@Override
-		public boolean matchesSafely(TestClassRequirementSet item) {
-			return item instanceof TestClassRequirementSet && item.equalAnnotationSet(set);
+		public boolean matchesSafely(TestClassRequirementMap item) {
+			return item instanceof TestClassRequirementMap && item.equalAnnotationSet(set);
 		}
 	}
 	
