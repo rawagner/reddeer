@@ -369,8 +369,10 @@ public class WidgetLookup {
 		if ((parentWidget == null) || parentWidget.isDisposed() || !visible(parentWidget)) {
 			return null;
 		}
-
-		if (matcher.matches(parentWidget))
+		logger.trace("matching parentWidget");
+		
+		if (matcher.matches(parentWidget)){
+			logger.trace("matched!");
 			try {
 				T control = (T) parentWidget;
 				if(index.isFirst()) {
@@ -381,14 +383,17 @@ public class WidgetLookup {
 			} catch (ClassCastException exception) {
 				throw new IllegalArgumentException("The specified matcher should only match against is declared type.", exception);
 			}
-		if (recursive) {
+		} if (recursive) {
+			logger.trace("did not match!");
 			List<Widget> children = Display.syncExec(new ResultRunnable<List<Widget>>() {
 
 				@Override
 				public List<Widget> run() {
+					logger.trace("getting children of widget");
 					return WidgetResolver.getInstance().getChildren(parentWidget);
 				}
 			});
+			logger.trace("find recursive");
 			return findControlUI(children, matcher, recursive, index);
 		}
 		return null;
@@ -430,17 +435,21 @@ public class WidgetLookup {
 	 * @return true if widget is visible, false otherwise
 	 */
 	private boolean visible(final Widget w) {
+		logger.trace("check visible vidget");
 		if (w.isDisposed()) {
 			return false;
 		}
 		
-		return Display.syncExec(new ResultRunnable<Boolean>() {
+		logger.trace("check visible vidget1");
+		boolean visible =  Display.syncExec(new ResultRunnable<Boolean>() {
 
 			@Override
 			public Boolean run() {
 				return !((w instanceof Control) && !((Control) w).getVisible());
 			}
 		});
+		logger.trace("check visible vidget2");
+		return visible;
 	}
 
 	private String createMatcherDebugMsg(Matcher<?>[] matchers) {

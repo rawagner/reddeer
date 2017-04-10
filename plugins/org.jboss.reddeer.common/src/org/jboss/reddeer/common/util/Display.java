@@ -71,20 +71,36 @@ public class Display {
 		ErrorHandlingRunnable<T> errorHandlingRunnable = new ErrorHandlingRunnable<T>(runnable);
 
 		if (!isUIThread()) {
+			log.trace("Use UI thrad to run the code");
 			Display.getDisplay().syncExec(errorHandlingRunnable);
 		} else {
+			log.trace("Already in UI thread, run the code");
 			if (runnable instanceof ErrorHandlingRunnable){
 				errorHandlingRunnable = (ErrorHandlingRunnable<T>) runnable;
 			}
 			errorHandlingRunnable.run();
 		}
-		
+		readAndDispatch();
 		if (errorHandlingRunnable.exceptionOccurred()){
 			handleErrorOccured(errorHandlingRunnable, true);
 		}
 		
 		return errorHandlingRunnable.getResult();
 
+	}
+	
+	private static void readAndDispatch(){
+		if (!isUIThread()) {
+			display.syncExec(new Runnable() {
+			
+				@Override
+				public void run() {
+					display.readAndDispatch();
+				}
+			});
+		} else {
+			display.readAndDispatch();
+		}
 	}
 
 	/**
@@ -96,7 +112,8 @@ public class Display {
 		ErrorHandlingRunnable<Void> errorHandlingRunnable = new ErrorHandlingRunnable<Void>(new VoidResultRunnable(runnable));
 
 		getDisplay().asyncExec(errorHandlingRunnable);
-
+		readAndDispatch();
+		
 		if (errorHandlingRunnable.exceptionOccurred()){
 			handleErrorOccured(errorHandlingRunnable, false);
 		}
