@@ -19,8 +19,13 @@ import org.jboss.reddeer.common.wait.WaitUntil;
 import org.jboss.reddeer.common.wait.WaitWhile;
 import org.jboss.reddeer.core.condition.ProgressInformationShellIsActive;
 import org.jboss.reddeer.core.condition.ShellWithTextIsAvailable;
+import org.jboss.reddeer.core.condition.WidgetIsFound;
 import org.jboss.reddeer.core.exception.CoreLayerException;
+import org.jboss.reddeer.core.matcher.ClassMatcher;
+import org.jboss.reddeer.core.matcher.WithMnemonicTextMatcher;
 import org.jboss.reddeer.junit.runner.RedDeerSuite;
+import org.jboss.reddeer.swt.api.Button;
+import org.jboss.reddeer.swt.impl.button.OkButton;
 import org.jboss.reddeer.swt.impl.button.PushButton;
 import org.jboss.reddeer.swt.impl.menu.ShellMenu;
 import org.jboss.reddeer.swt.impl.menu.ViewMenu;
@@ -39,7 +44,17 @@ public class ViewMenuTest {
 	public void testErrorLogMenu() {
 		new ShellMenu("Window", "Show View", "Other...").select();
 		new DefaultTreeItem("General", "Error Log").select();
-		new PushButton("OK").click();
+		WidgetIsFound<org.eclipse.swt.widgets.Button> openButton = new WidgetIsFound<>(
+				new ClassMatcher(org.eclipse.swt.widgets.Button.class), new WithMnemonicTextMatcher("Open"));
+		
+		
+		Button btn;
+		if(openButton.test()){
+			btn = new PushButton("Open"); //oxygen changed button text
+		} else {
+			btn = new OkButton();	
+		}
+		btn.click();
 		new ViewMenu("View Menu", "Filters...").select();
 		new DefaultShell("Log Filters");
 		new PushButton("OK").click();
@@ -51,7 +66,17 @@ public class ViewMenuTest {
 	public void testCheckStyledMenus() {
 		new ShellMenu("Window", "Show View", "Other...").select();
 		new DefaultTreeItem("General", "Error Log").select();
-		new PushButton("OK").click();
+		WidgetIsFound<org.eclipse.swt.widgets.Button> openButton = new WidgetIsFound<>(
+				new ClassMatcher(org.eclipse.swt.widgets.Button.class), new WithMnemonicTextMatcher("Open"));
+		
+		
+		Button btn;
+		if(openButton.test()){
+			btn = new PushButton("Open"); //oxygen changed button text
+		} else {
+			btn = new OkButton();	
+		}
+		btn.click();
 		ViewMenu filter = new ViewMenu("Show text filter");
 		boolean selected = filter.isSelected();
 		if (selected) {
@@ -79,7 +104,17 @@ public class ViewMenuTest {
 		// open View
 		new ShellMenu("Window", "Show View", "Other...").select();
 		new DefaultTreeItem("RedDeer SWT", "RedDeer SWT").select();
-		new PushButton("OK").click();
+		WidgetIsFound<org.eclipse.swt.widgets.Button> openButton = new WidgetIsFound<>(
+				new ClassMatcher(org.eclipse.swt.widgets.Button.class), new WithMnemonicTextMatcher("Open"));
+		
+		
+		Button btn;
+		if(openButton.test()){
+			btn = new PushButton("Open"); //oxygen changed button text
+		} else {
+			btn = new OkButton();	
+		}
+		btn.click();
 
 		// click menu item A
 		new ViewMenu("submenu", "parameterizedMenuA").select();
@@ -97,7 +132,17 @@ public class ViewMenuTest {
 		// open View
 		new ShellMenu("Window", "Show View", "Other...").select();
 		new DefaultTreeItem("RedDeer SWT", "RedDeer SWT").select();
-		new PushButton("OK").click();
+		WidgetIsFound<org.eclipse.swt.widgets.Button> openButton = new WidgetIsFound<>(
+				new ClassMatcher(org.eclipse.swt.widgets.Button.class), new WithMnemonicTextMatcher("Open"));
+		
+		
+		Button btn;
+		if(openButton.test()){
+			btn = new PushButton("Open"); //oxygen changed button text
+		} else {
+			btn = new OkButton();	
+		}
+		btn.click();
 
 		// click Action With Id Menu
 		assertFalse(ViewActionWithId.isToggled());

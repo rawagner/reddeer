@@ -18,6 +18,10 @@ import org.jboss.reddeer.common.wait.WaitUntil;
 import org.jboss.reddeer.common.wait.WaitWhile;
 import org.jboss.reddeer.core.condition.ProgressInformationShellIsActive;
 import org.jboss.reddeer.core.condition.ShellWithTextIsAvailable;
+import org.jboss.reddeer.core.condition.WidgetIsFound;
+import org.jboss.reddeer.core.matcher.ClassMatcher;
+import org.jboss.reddeer.core.matcher.WithMnemonicTextMatcher;
+import org.jboss.reddeer.swt.api.Button;
 import org.jboss.reddeer.swt.api.Menu;
 import org.jboss.reddeer.swt.api.TreeItem;
 import org.jboss.reddeer.swt.impl.button.CheckBox;
@@ -151,7 +155,17 @@ public class LogView extends WorkbenchView{
 		}
 		cm.select();
 		new DefaultShell(CONFIRM_DLG);
-		new OkButton().click();
+		WidgetIsFound<org.eclipse.swt.widgets.Button> openButton = new WidgetIsFound<>(
+				new ClassMatcher(org.eclipse.swt.widgets.Button.class), new WithMnemonicTextMatcher("Delete all events"));
+		
+		
+		Button btn;
+		if(openButton.test()){
+			btn = new PushButton("Delete all events"); //oxygen changed button text
+		} else {
+			btn = new OkButton();	
+		}
+		btn.click();
 		new WaitWhile(new ShellWithTextIsAvailable(CONFIRM_DLG));
 	}
 

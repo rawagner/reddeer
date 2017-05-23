@@ -11,10 +11,10 @@
 package org.jboss.reddeer.swt.test.utils;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Shell;
 import org.jboss.reddeer.core.condition.ShellWithTextIsAvailable;
-import org.jboss.reddeer.swt.exception.SWTLayerException;
 import org.jboss.reddeer.common.wait.WaitWhile;
 
 public class ShellTestUtils {
@@ -35,7 +35,7 @@ public class ShellTestUtils {
 				if(!shell.isDisposed()){
 					try{
 						shell.dispose();
-					} catch (SWTLayerException e) {
+					} catch (SWTException e) {
 						// TODO: handle exception
 					}
 				}

@@ -25,6 +25,7 @@ import org.jboss.reddeer.core.matcher.WithMnemonicTextMatcher;
 import org.jboss.reddeer.swt.api.Button;
 import org.jboss.reddeer.swt.api.TreeItem;
 import org.jboss.reddeer.swt.condition.CLabelWithTextIsAvailable;
+import org.jboss.reddeer.swt.condition.ShellIsAvailable;
 import org.jboss.reddeer.swt.impl.button.CancelButton;
 import org.jboss.reddeer.swt.impl.button.OkButton;
 import org.jboss.reddeer.swt.impl.button.PushButton;
@@ -113,6 +114,7 @@ public abstract class PreferenceDialog {
 	 * Presses Ok button on Property Dialog. 
 	 */
 	public void ok() {
+		org.jboss.reddeer.swt.api.Shell preferencesShell = new DefaultShell(getTitle());
 		final String parentShellText = WidgetHandler.getInstance().getText(
 				ShellHandler.getInstance().getParentShell(new DefaultShell(getTitle()).getSWTWidget()));
 		
@@ -127,7 +129,7 @@ public abstract class PreferenceDialog {
 			btn = new OkButton();	
 		}
 		btn.click();
-		new WaitWhile(new ShellWithTextIsAvailable(getTitle())); 
+		new WaitWhile(new ShellIsAvailable(preferencesShell)); 
 		new DefaultShell(parentShellText);
 	}
 	

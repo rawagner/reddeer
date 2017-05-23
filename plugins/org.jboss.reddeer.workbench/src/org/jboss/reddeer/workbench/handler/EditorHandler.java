@@ -27,12 +27,20 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.SimpleMarkerAnnotation;
 import org.jboss.reddeer.common.logging.Logger;
+import org.jboss.reddeer.common.matcher.RegexMatcher;
+import org.jboss.reddeer.swt.api.Button;
+import org.jboss.reddeer.swt.api.Shell;
+import org.jboss.reddeer.swt.condition.ShellIsAvailable;
 import org.jboss.reddeer.swt.impl.button.PushButton;
 import org.jboss.reddeer.swt.impl.shell.DefaultShell;
 import org.jboss.reddeer.core.util.Display;
 import org.jboss.reddeer.core.util.ResultRunnable;
 import org.jboss.reddeer.core.condition.ShellWithTextIsAvailable;
+import org.jboss.reddeer.core.condition.WidgetIsFound;
 import org.jboss.reddeer.core.handler.WorkbenchPartHandler;
+import org.jboss.reddeer.core.matcher.ClassMatcher;
+import org.jboss.reddeer.core.matcher.WithMnemonicTextMatcher;
+import org.jboss.reddeer.core.matcher.WithTextMatcher;
 import org.jboss.reddeer.common.wait.WaitWhile;
 import org.jboss.reddeer.workbench.exception.WorkbenchLayerException;
 import org.jboss.reddeer.workbench.impl.editor.Marker;
@@ -150,9 +158,21 @@ public class EditorHandler {
                             save);
                 }
             });
-            new DefaultShell("Save Resource");
-            new PushButton("Yes").click();
-            new WaitWhile(new ShellWithTextIsAvailable("Save Resource"));
+            Shell saveShell = new DefaultShell(new WithTextMatcher(new RegexMatcher("Save .*")));
+            
+            WidgetIsFound<org.eclipse.swt.widgets.Button> openButton = new WidgetIsFound<>(
+    				new ClassMatcher(org.eclipse.swt.widgets.Button.class), new WithMnemonicTextMatcher("Save"));
+    		
+    		
+    		Button btn;
+    		if(openButton.test()){
+    			btn = new PushButton("Save"); //oxygen changed button text
+    		} else {
+    			btn = new PushButton("Yes");	
+    		}
+    		btn.click();
+    		
+            new WaitWhile(new ShellIsAvailable(saveShell));
         } else {
             Display.syncExec(new Runnable() {
 

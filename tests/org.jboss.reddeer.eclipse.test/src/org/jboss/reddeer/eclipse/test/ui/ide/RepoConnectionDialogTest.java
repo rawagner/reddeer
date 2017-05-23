@@ -19,8 +19,10 @@ import org.jboss.reddeer.eclipse.equinox.security.ui.StoragePreferencePage;
 import org.jboss.reddeer.workbench.ui.dialogs.WorkbenchPreferenceDialog;
 import org.jboss.reddeer.eclipse.ui.ide.RepoConnectionDialog;
 import org.jboss.reddeer.junit.runner.RedDeerSuite;
+import org.jboss.reddeer.swt.api.Button;
 import org.jboss.reddeer.swt.api.TableItem;
 import org.jboss.reddeer.swt.api.TreeItem;
+import org.jboss.reddeer.swt.impl.button.OkButton;
 import org.jboss.reddeer.swt.impl.button.PushButton;
 import org.jboss.reddeer.swt.impl.menu.ShellMenu;
 import org.jboss.reddeer.swt.impl.text.LabeledText;
@@ -28,6 +30,9 @@ import org.jboss.reddeer.swt.impl.tree.DefaultTree;
 import org.jboss.reddeer.swt.impl.tree.DefaultTreeItem;
 import org.jboss.reddeer.common.wait.AbstractWait;
 import org.jboss.reddeer.common.wait.TimePeriod;
+import org.jboss.reddeer.core.condition.WidgetIsFound;
+import org.jboss.reddeer.core.matcher.ClassMatcher;
+import org.jboss.reddeer.core.matcher.WithMnemonicTextMatcher;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -52,7 +57,17 @@ public class RepoConnectionDialogTest  {
 		new ShellMenu("Window", "Show View", "Other...").select();		
 		DefaultTreeItem taskRepositories = new DefaultTreeItem ("Mylyn", "Task Repositories");
 		taskRepositories.select();		
-		new PushButton("OK").click();
+		WidgetIsFound<org.eclipse.swt.widgets.Button> openButton = new WidgetIsFound<>(
+				new ClassMatcher(org.eclipse.swt.widgets.Button.class), new WithMnemonicTextMatcher("Open"));
+		
+		
+		Button btn;
+		if(openButton.test()){
+			btn = new PushButton("Open"); //oxygen changed button text
+		} else {
+			btn = new OkButton();	
+		}
+		btn.click();
 				
 		AbstractWait.sleep(TimePeriod.NORMAL);
 		
