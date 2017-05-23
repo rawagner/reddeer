@@ -16,14 +16,19 @@ import org.eclipse.ui.PlatformUI;
 import org.jboss.reddeer.common.logging.Logger;
 import org.jboss.reddeer.common.matcher.RegexMatcher;
 import org.jboss.reddeer.common.wait.WaitWhile;
+import org.jboss.reddeer.core.condition.WidgetIsFound;
 import org.jboss.reddeer.core.exception.CoreLayerException;
+import org.jboss.reddeer.core.matcher.ClassMatcher;
+import org.jboss.reddeer.core.matcher.WithMnemonicTextMatcher;
 import org.jboss.reddeer.core.matcher.WithTextMatchers;
 import org.jboss.reddeer.core.util.Display;
 import org.jboss.reddeer.core.util.ResultRunnable;
 import org.jboss.reddeer.eclipse.exception.EclipseLayerException;
+import org.jboss.reddeer.swt.api.Button;
 import org.jboss.reddeer.swt.api.Menu;
 import org.jboss.reddeer.swt.api.Shell;
 import org.jboss.reddeer.swt.condition.ShellIsAvailable;
+import org.jboss.reddeer.swt.impl.button.OkButton;
 import org.jboss.reddeer.swt.impl.button.PushButton;
 import org.jboss.reddeer.swt.impl.button.YesButton;
 import org.jboss.reddeer.swt.impl.menu.ShellMenu;
@@ -78,13 +83,18 @@ public abstract class AbstractPerspective {
 				table.select(getPerspectiveLabel() + " (default)");
 			}
 			
-			Version version = Platform.getBundle("org.eclipse.ui.workbench").getVersion();
-			Version v = new Version(3, 110, 0);
-			if(version.compareTo(v) < 0){
-				new PushButton("OK").click();
+			
+			WidgetIsFound<org.eclipse.swt.widgets.Button> openButton = new WidgetIsFound<>(
+					new ClassMatcher(org.eclipse.swt.widgets.Button.class), new WithMnemonicTextMatcher("Open"));
+			
+			
+			Button btn;
+			if(openButton.test()){
+				btn = new PushButton("Open"); //oxygen changed button text
 			} else {
-				new PushButton("Open").click();
+				btn = new OkButton();	
 			}
+			btn.click();
 			new WaitWhile(new ShellIsAvailable(perspectiveShell));
 			
 		}
