@@ -229,12 +229,12 @@ public class AbstractView implements View {
 		new DefaultShell(SHOW_VIEW);
 		new DefaultTreeItem(path).select();
 		
-		WidgetIsFound<org.eclipse.swt.widgets.Button> applyAndCloseButton = new WidgetIsFound<>(
+		WidgetIsFound<org.eclipse.swt.widgets.Button> openButton = new WidgetIsFound<>(
 				new ClassMatcher(org.eclipse.swt.widgets.Button.class), new WithMnemonicTextMatcher("Open"));
 		
 		
 		Button btn;
-		if(applyAndCloseButton.test()){
+		if(openButton.test()){
 			btn = new PushButton("Open"); //oxygen changed button text
 		} else {
 			btn = new OkButton();	

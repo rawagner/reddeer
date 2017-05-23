@@ -13,7 +13,8 @@ package org.jboss.reddeer.swt.test.utils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Shell;
-import org.jboss.reddeer.core.condition.ShellWithTextIsActive;
+import org.jboss.reddeer.core.condition.ShellWithTextIsAvailable;
+import org.jboss.reddeer.swt.exception.SWTLayerException;
 import org.jboss.reddeer.common.wait.WaitWhile;
 
 public class ShellTestUtils {
@@ -31,10 +32,16 @@ public class ShellTestUtils {
 	public static void closeShell(String title){
 		for (Shell shell : org.jboss.reddeer.core.util.Display.getDisplay().getShells()) {
 			if (shell.getText().equals(title)) {
-				shell.dispose();
+				if(!shell.isDisposed()){
+					try{
+						shell.dispose();
+					} catch (SWTLayerException e) {
+						// TODO: handle exception
+					}
+				}
 				break;
 			}
 		}
-		new WaitWhile(new ShellWithTextIsActive(title));
+		new WaitWhile(new ShellWithTextIsAvailable(title));
 	}
 }
