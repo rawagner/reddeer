@@ -129,9 +129,9 @@ public class BuildPathsPropertyPage extends PropertyPage {
 			new DefaultShell("New Variable Classpath Entry");
 			new DefaultTableItem(label).select();
 			new PushButton("Configure Variables...").click();
-			new FilteredPreferenceDialog().open();
+			FilteredPreferenceDialog preferenceDialog = new FilteredPreferenceDialog();
+			preferenceDialog.open();
 			new ClasspathVariablesPreferencePage().removeVariable(label);
-			new OkButton().click();
 			new DefaultShell("Classpath Variables Changed");
 			new YesButton().click();
 			new WaitWhile(new ShellWithTextIsAvailable("Classpath Variables Changed"));

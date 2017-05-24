@@ -10,22 +10,32 @@
  ******************************************************************************/ 
 package org.jboss.reddeer.eclipse.ui.perspectives;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.PlatformUI;
 import org.jboss.reddeer.common.logging.Logger;
 import org.jboss.reddeer.common.matcher.RegexMatcher;
+import org.jboss.reddeer.common.wait.WaitWhile;
+import org.jboss.reddeer.core.condition.WidgetIsFound;
 import org.jboss.reddeer.core.exception.CoreLayerException;
+import org.jboss.reddeer.core.matcher.ClassMatcher;
+import org.jboss.reddeer.core.matcher.WithMnemonicTextMatcher;
 import org.jboss.reddeer.core.matcher.WithTextMatchers;
 import org.jboss.reddeer.core.util.Display;
 import org.jboss.reddeer.core.util.ResultRunnable;
 import org.jboss.reddeer.eclipse.exception.EclipseLayerException;
+import org.jboss.reddeer.swt.api.Button;
 import org.jboss.reddeer.swt.api.Menu;
+import org.jboss.reddeer.swt.api.Shell;
+import org.jboss.reddeer.swt.condition.ShellIsAvailable;
+import org.jboss.reddeer.swt.impl.button.OkButton;
 import org.jboss.reddeer.swt.impl.button.PushButton;
 import org.jboss.reddeer.swt.impl.button.YesButton;
 import org.jboss.reddeer.swt.impl.menu.ShellMenu;
 import org.jboss.reddeer.swt.impl.shell.DefaultShell;
 import org.jboss.reddeer.swt.impl.table.DefaultTable;
 import org.jboss.reddeer.swt.impl.toolbar.DefaultToolItem;
+import org.osgi.framework.Version;
 
 /**
  * Abstract parent for each Perspective implementation
@@ -63,7 +73,7 @@ public abstract class AbstractPerspective {
 		else{
 			log.debug("Tryyying to open perspective: '" + getPerspectiveLabel() + "'");
 			new DefaultToolItem(new DefaultShell(),"Open Perspective").click();
-			new DefaultShell("Open Perspective");
+			Shell perspectiveShell = new DefaultShell("Open Perspective");
 			DefaultTable table = new DefaultTable();
 			try{
 				// Try to select perspective label within available perspectives
@@ -72,7 +82,21 @@ public abstract class AbstractPerspective {
 				// Try to select perspective label within available perspectives with "(default)" suffix
 				table.select(getPerspectiveLabel() + " (default)");
 			}
-			new PushButton("OK").click();
+			
+			
+			WidgetIsFound<org.eclipse.swt.widgets.Button> openButton = new WidgetIsFound<>(
+					new ClassMatcher(org.eclipse.swt.widgets.Button.class), new WithMnemonicTextMatcher("Open"));
+			
+			
+			Button btn;
+			if(openButton.test()){
+				btn = new PushButton("Open"); //oxygen changed button text
+			} else {
+				btn = new OkButton();	
+			}
+			btn.click();
+			new WaitWhile(new ShellIsAvailable(perspectiveShell));
+			
 		}
 	}
 

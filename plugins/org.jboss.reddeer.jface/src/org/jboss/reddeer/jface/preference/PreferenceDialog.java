@@ -16,13 +16,19 @@ import org.jboss.reddeer.common.wait.TimePeriod;
 import org.jboss.reddeer.common.wait.WaitUntil;
 import org.jboss.reddeer.common.wait.WaitWhile;
 import org.jboss.reddeer.core.condition.ShellWithTextIsAvailable;
+import org.jboss.reddeer.core.condition.WidgetIsFound;
 import org.jboss.reddeer.core.handler.ShellHandler;
 import org.jboss.reddeer.core.handler.WidgetHandler;
 import org.jboss.reddeer.core.lookup.ShellLookup;
+import org.jboss.reddeer.core.matcher.ClassMatcher;
+import org.jboss.reddeer.core.matcher.WithMnemonicTextMatcher;
+import org.jboss.reddeer.swt.api.Button;
 import org.jboss.reddeer.swt.api.TreeItem;
 import org.jboss.reddeer.swt.condition.CLabelWithTextIsAvailable;
+import org.jboss.reddeer.swt.condition.ShellIsAvailable;
 import org.jboss.reddeer.swt.impl.button.CancelButton;
 import org.jboss.reddeer.swt.impl.button.OkButton;
+import org.jboss.reddeer.swt.impl.button.PushButton;
 import org.jboss.reddeer.swt.impl.clabel.DefaultCLabel;
 import org.jboss.reddeer.swt.impl.shell.DefaultShell;
 import org.jboss.reddeer.swt.impl.tree.DefaultTreeItem;
@@ -108,12 +114,22 @@ public abstract class PreferenceDialog {
 	 * Presses Ok button on Property Dialog. 
 	 */
 	public void ok() {
+		org.jboss.reddeer.swt.api.Shell preferencesShell = new DefaultShell(getTitle());
 		final String parentShellText = WidgetHandler.getInstance().getText(
 				ShellHandler.getInstance().getParentShell(new DefaultShell(getTitle()).getSWTWidget()));
 		
-		OkButton ok = new OkButton();
-		ok.click();
-		new WaitWhile(new ShellWithTextIsAvailable(getTitle())); 
+		WidgetIsFound<org.eclipse.swt.widgets.Button> applyAndCloseButton = new WidgetIsFound<>(
+				new ClassMatcher(org.eclipse.swt.widgets.Button.class), new WithMnemonicTextMatcher("Apply and Close"));
+		
+		
+		Button btn;
+		if(applyAndCloseButton.test()){
+			btn = new PushButton("Apply and Close"); //oxygen changed button text
+		} else {
+			btn = new OkButton();	
+		}
+		btn.click();
+		new WaitWhile(new ShellIsAvailable(preferencesShell)); 
 		new DefaultShell(parentShellText);
 	}
 	
