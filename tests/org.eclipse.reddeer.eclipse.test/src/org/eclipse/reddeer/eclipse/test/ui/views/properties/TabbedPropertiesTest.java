@@ -12,6 +12,7 @@ package org.eclipse.reddeer.eclipse.test.ui.views.properties;
 
 import java.util.List;
 
+import org.eclipse.reddeer.common.logging.Logger;
 import org.eclipse.reddeer.common.wait.WaitWhile;
 import org.eclipse.reddeer.eclipse.ui.navigator.resources.ProjectExplorer;
 import org.eclipse.reddeer.eclipse.ui.views.properties.PropertySheet;
@@ -41,9 +42,12 @@ import org.junit.runner.RunWith;
  */
 @RunWith(RedDeerSuite.class)
 public class TabbedPropertiesTest {
+	
+	private static final Logger log = Logger.getLogger(TabbedPropertiesTest.class);
 
 	@BeforeClass
 	public static void createGeneralProjectAndXsdFile() {
+		log.info("started test!");
 		new ProjectExplorer().open();
 		new PropertySheet().open();
 

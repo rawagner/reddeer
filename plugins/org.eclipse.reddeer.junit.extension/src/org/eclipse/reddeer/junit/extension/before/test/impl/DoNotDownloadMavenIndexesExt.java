@@ -56,11 +56,12 @@ public class DoNotDownloadMavenIndexesExt implements IBeforeTest {
 	 * Disables downloading Maven repo indexes on startup.
 	 */
 	private void disableMavenDownloadRepoIndexOnStartup() {
+		log.info("MAVEN: 1");
 		String updateIndexesPreferenceString = Platform
 				.getPreferencesService()
 				.getString("org.eclipse.m2e.core", "eclipse.m2.updateIndexes",
 						"true", null);
-
+		log.info("MAVEN: 2");
 		// Maven is not installed
 		if (updateIndexesPreferenceString == null) {
 			return;
@@ -77,17 +78,22 @@ public class DoNotDownloadMavenIndexesExt implements IBeforeTest {
 		WorkbenchPreferenceDialog preferencesDialog = new WorkbenchPreferenceDialog();
 		MavenPreferencePage mavenPreferencePage = new MavenPreferencePage();
 
+		log.info("MAVEN: 3");
 		preferencesDialog.open();
+		log.info("MAVEN: 4");
 		try {
 			preferencesDialog.select(mavenPreferencePage);
+			log.info("MAVEN: 5");
 		} catch (RedDeerException e){
 			// Maven is not installed
 			preferencesDialog.cancel();
+			log.info("MAVEN: 6");
 			return;
 		}
 		mavenPreferencePage.setDownloadRepoIndexOnStartup(false);
+		log.info("MAVEN: 7");
 		preferencesDialog.ok();
-		
+		log.info("MAVEN: 8");
 		log.debug("Downloading maven repo indexes on startup disabled");
 	}
 
