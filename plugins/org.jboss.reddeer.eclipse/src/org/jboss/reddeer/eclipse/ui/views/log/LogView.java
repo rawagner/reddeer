@@ -156,12 +156,12 @@ public class LogView extends WorkbenchView{
 		cm.select();
 		new DefaultShell(CONFIRM_DLG);
 		WidgetIsFound<org.eclipse.swt.widgets.Button> openButton = new WidgetIsFound<>(
-				new ClassMatcher(org.eclipse.swt.widgets.Button.class), new WithMnemonicTextMatcher("Delete all events"));
+				new ClassMatcher(org.eclipse.swt.widgets.Button.class), new WithMnemonicTextMatcher("Delete All Events"));
 		
 		
 		Button btn;
 		if(openButton.test()){
-			btn = new PushButton("Delete all events"); //oxygen changed button text
+			btn = new PushButton("Delete All Events"); //oxygen changed button text
 		} else {
 			btn = new OkButton();	
 		}
