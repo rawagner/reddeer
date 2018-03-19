@@ -36,7 +36,7 @@ public class BrowserHasURLTest {
 	private WebBrowserView browser;
 	private BrowserEditor browserEditor;
 	private static final String BAD_URL = "https://www.redhat.com/en";
-	private static final String URL = "http://www.w3.org/";
+	private static final String URL = "https://www.w3.org/";
 	private static final String REG_EXP_URL = ".*(www.w3.org).*";
 	
 	@After

@@ -20,4 +20,3 @@ Export-Package: org.eclipse.reddeer.core.condition,
 Import-Package: org.eclipse.reddeer.workbench.core.lookup;resolution:=optional,
  org.eclipse.reddeer.workbench.core.exception;resolution:=optional,
  org.eclipse.reddeer.workbench.core.condition;resolution:=optional
-

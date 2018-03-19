@@ -128,9 +128,9 @@ public abstract class LaunchConfigurationsDialog {
 
 		new WaitUntil(new TreeIsSelectedAndHasFocus(t));
 
-		//photon changed menu text to "New configuration"
+		//photon changed menu text to "New Configuration"
 		MenuItem newMenuItem = new ContextMenu().getItems().stream()
-			.filter(menuItem -> menuItem.getText().equals("New") || menuItem.getText().equals("New configuration")).findFirst().get();
+			.filter(menuItem -> menuItem.getText().equals("New") || menuItem.getText().equals("New Configuration")).findFirst().get();
 		if(newMenuItem == null) {
 			throw new EclipseLayerException("Cannot create new launch configuration");
 		}
